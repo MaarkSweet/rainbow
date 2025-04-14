@@ -1,0 +1,27 @@
+.catalogpage {
+    width: 100%;
+    height: fit-content;
+    margin-bottom: 14.5%;
+}
+
+.navigation {
+    color: rgb(230, 230, 230);
+    font-size: 16px;
+    display: flex;
+    gap: 0 5px;
+    align-items: center;
+    margin-bottom: 50px;
+    font-family: "Rubik", sans-serif;
+}
+
+.catalogtitle {
+    font-size: 20px;
+    margin-bottom: 30px;
+    display: block;
+    margin-left: 20%;
+}
+
+.card-container-catalog{
+    justify-content: center;
+    gap: 30px;
+}

@@ -17,7 +17,7 @@ export default function Catalog({ searchQuery = '', hideAddToCart = false }) {
 
     const addToCart = async (productId) => {
         try {
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/api/cart/add', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/cart/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,8 +45,8 @@ export default function Catalog({ searchQuery = '', hideAddToCart = false }) {
             setIsLoading(true);
             try {
                 const url = searchQuery
-                    ? `http://rainbow-backend-a9w1.onrender.com/api/catalog?q=${encodeURIComponent(searchQuery)}`
-                    : 'http://rainbow-backend-a9w1.onrender.com/api/catalog';
+                    ? `https://rainbow-backend-a9w1.onrender.com/api/catalog?q=${encodeURIComponent(searchQuery)}`
+                    : 'https://rainbow-backend-a9w1.onrender.com/api/catalog';
 
                 const response = await fetch(url);
                 const result = await response.json();

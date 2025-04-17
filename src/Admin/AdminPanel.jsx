@@ -23,7 +23,7 @@ const AdminPanel = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/api/catalog');
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/catalog');
             if (!response.ok) throw new Error('Ошибка загрузки');
             const data = await response.json();
             setProducts(data);
@@ -43,7 +43,7 @@ const AdminPanel = () => {
 
             const credentials = btoa('admin:admin');
 
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/admin/products', { 
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/products', { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ const AdminPanel = () => {
             if (!window.confirm('Вы точно хотите удалить этот товар?')) return;
 
             const credentials = btoa('admin:admin');
-            const response = await fetch(`http://rainbow-backend-a9w1.onrender.com/admin/products/${id}`, {
+            const response = await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/products/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Basic ${credentials}`

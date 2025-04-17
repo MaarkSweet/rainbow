@@ -23,7 +23,7 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/api/login', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),

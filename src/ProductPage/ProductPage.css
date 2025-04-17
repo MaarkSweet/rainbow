@@ -82,7 +82,7 @@
 
 }
 
-.productpage-content-basket button {
+.productpage-content-basket-count {
     background-color: #00C65E;
     width: 15%;
     padding: 5x;
@@ -90,7 +90,7 @@
     color: #fff;
 }
 
-.productpage-content-basket a {
+.productpage-content-basket-linkpage {
     background-color: #00C65E;
     font-family: "Rubik", sans-serif;
     width: 60%;

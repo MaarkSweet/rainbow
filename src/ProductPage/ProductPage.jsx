@@ -1,38 +1,97 @@
 import '../main.css'
 import './ProductPage.css'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import star from './img/star.svg'
 import favorite from './img/favorite.svg'
 import { useState, useEffect } from 'react'
+import { useCart } from '../CartContext'
+import { useAuth } from '../AuthContext'
 
 export default function ProductPage() {
-    const { id } = useParams() 
-    const [product, setProduct] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState(null)
+    const { id } = useParams();
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [count, setCount] = useState(1);
+    const navigate = useNavigate();
+    const { fetchCartCount } = useCart();
+    const { user } = useAuth();
+    const userId = user?.id;
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:3009/api/catalog/${id}`)
-                if (!response.ok) {
-                    throw new Error('Товар не найден')
-                }
-                const data = await response.json()
-                setProduct(data)
+                const response = await fetch(`http://rainbow-backend-a9w1.onrender.com/api/catalog/${id}`);
+                if (!response.ok) throw new Error('Товар не найден');
+                const data = await response.json();
+                setProduct(data);
             } catch (err) {
-                setError(err.message)
+                setError(err.message);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
+        };
+        fetchProduct();
+    }, [id]);
+
+    const addToCart = async () => {
+        try {
+            await fetch('http://rainbow-backend-a9w1.onrender.com/api/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    product_id: parseInt(id, 10),
+                    quantity: count
+                })
+            });
+            await fetchCartCount();
+            navigate('/basket');
+        } catch (err) {
+            alert('Ошибка при добавлении в корзину');
+            console.error(err);
+        }
+    };
+
+    if (loading) return <div className="loading">Загрузка...</div>;
+    if (error) return <div className="error">{error}</div>;
+    if (!product) return <div className="not-found">Товар не найден</div>;
+
+    const addToFavorites = async () => {
+        if (!userId) {
+            alert('Сначала войдите в аккаунт');
+            return;
         }
 
-        fetchProduct()
-    }, [id])
+        try {
+            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/api/add-favorite', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    product: {
+                        id: product.id,
+                        name: product.product_name,
+                        price: product.price,
+                        image: product.image_path
+                    }
+                })
+            });
 
-    if (loading) return <div className="loading">Загрузка...</div>
-    if (error) return <div className="error">{error}</div>
-    if (!product) return <div className="not-found">Товар не найден</div>
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Ошибка при добавлении в избранное');
+
+            alert('Товар добавлен в избранное');
+        } catch (err) {
+            console.error(err);
+            alert(err.message || 'Ошибка');
+        }
+        console.log('Клик по избранному');
+    };
 
     return (
         <section className='productpage'>
@@ -55,28 +114,29 @@ export default function ProductPage() {
                                     ))}
                                     <li><span>({product.reviews_count || 0})</span></li>
                                 </ul>
-
-                                <div className='productpage-content-favorites'>
+                                <div className='productpage-content-favorites' onClick={() => addToFavorites()}>
                                     <img src={favorite} alt="Добавить в избранное" />
                                     <span>В избранное</span>
                                 </div>
                             </div>
 
                             <div className='productpage-content-bot'>
-                                <p>{product.price} ₽</p>
+                                <p>{product.price * count} ₽</p>
                                 <div className='productpage-content-basket'>
-                                    <button>-</button>
-                                    <Link to='/basket'>В корзине 1 шт<br />
+                                    <button className='productpage-content-basket-count' onClick={() => setCount(Math.max(1, count - 1))}>-</button>
+                                    <button className='productpage-content-basket-linkpage' onClick={addToCart}>
+                                        В корзине {count} шт<br />
                                         перейти
-                                    </Link>
-                                    <button>+</button>
+                                    </button>
+                                    <button className='productpage-content-basket-count' onClick={() => setCount(count + 1)}>+</button>
                                 </div>
                             </div>
-                            <Link className='buyioc' to='#'>Купить в 1 клик</Link>
+
+                            <Link className='buyioc' to='/paymentpage'>Купить в 1 клик</Link>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-    )
+    );
 }

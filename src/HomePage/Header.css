@@ -205,3 +205,22 @@ header {
     text-align: center;
     line-height: 1;
 }
+
+.user-profile {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.user-profile>button{
+    background-color: #d12b2b;
+    padding: 3px 10px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+
+.user-profile-link>img {
+    width: 23px;
+    height: 23px;
+}

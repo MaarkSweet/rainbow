@@ -6,22 +6,24 @@ import arrow from './img/arrow.svg'
 import { Link } from 'react-router-dom'
 import React, { useState, useEffect } from 'react'
 import { useCart } from '../CartContext'
+import { useAuth } from '../AuthContext'
+
 
 export default function Catalog({ searchQuery = '', hideAddToCart = false }) {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [currentUser] = useState(1);
+    const { user } = useAuth();
     const { fetchCartCount } = useCart();
 
     const addToCart = async (productId) => {
         try {
-            const response = await fetch('http://localhost:3009/api/cart/add', {
+            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/api/cart/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    user_id: currentUser,
+                    user_id:  user.id,
                     product_id: productId,
                     quantity: 1
                 })
@@ -43,8 +45,8 @@ export default function Catalog({ searchQuery = '', hideAddToCart = false }) {
             setIsLoading(true);
             try {
                 const url = searchQuery
-                    ? `http://localhost:3009/api/catalog?q=${encodeURIComponent(searchQuery)}`
-                    : 'http://localhost:3009/api/catalog';
+                    ? `http://rainbow-backend-a9w1.onrender.com/api/catalog?q=${encodeURIComponent(searchQuery)}`
+                    : 'http://rainbow-backend-a9w1.onrender.com/api/catalog';
 
                 const response = await fetch(url);
                 const result = await response.json();

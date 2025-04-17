@@ -7,10 +7,13 @@ import search from './img/search.svg'
 import shopping from './img/shopping.svg'
 import { useState, useRef, useEffect } from 'react';
 import closebrg from './img/closebrg.svg'
-import user from './img/user.svg'
 import { useCart } from '../CartContext'
+import { useAuth } from '../AuthContext.jsx';
+import userIcon from './img/userIcon.svg'
+
 
 export default function Header({ onSearch }) {
+    const { user, logout } = useAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearchActive, setIsSearchActive] = useState(false);
@@ -137,10 +140,19 @@ export default function Header({ onSearch }) {
                                             </span>
                                         )}
                                     </Link>
-                                    <Link className='user-log-res' to='/login'>
-                                        <img src={user} alt="Пользователь" />
-                                        Вход/Регистрация
-                                    </Link>
+                                    {user ? (
+                                        <div className="user-profile">
+                                            <Link className='user-profile-link' to='/profile'>
+                                                <img src={userIcon} alt="" />
+                                            </Link>
+                                            <button onClick={logout}>Выйти</button>
+                                        </div>
+                                    ) : (
+                                        <Link className='user-log-res' to='/login'>
+                                            <img src={userIcon} alt="Пользователь" />
+                                            Вход/Регистрация
+                                        </Link>
+                                    )}
                                 </li>
 
                             </ul>

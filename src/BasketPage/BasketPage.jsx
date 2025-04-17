@@ -7,17 +7,18 @@ import trash from './img/trash.svg'
 import Catalog from '../HomePage/Сatalog'
 import React, { useState, useEffect } from 'react'
 import { useCart } from '../CartContext'
+import { useAuth } from '../AuthContext'
 
 export default function BasketPage() {
     const [cartItems, setCartItems] = useState([]);
     const [totals, setTotals] = useState({ total_items: 0, cart_total: 0 });
-    const [currentUser] = useState(1);
-    const [isUpdating, setIsUpdating] = useState(false); 
+    const { user } = useAuth();
+    const [isUpdating, setIsUpdating] = useState(false);
     const { fetchCartCount } = useCart();
 
     const fetchCartData = async () => {
         try {
-            const response = await fetch(`http://localhost:3009/api/cart/${currentUser}`);
+            const response = await fetch(`http://rainbow-backend-a9w1.onrender.com/api/cart/${user.id}`);
             const data = await response.json();
             setCartItems(data.items);
             setTotals(data.totals);
@@ -28,7 +29,7 @@ export default function BasketPage() {
 
     useEffect(() => {
         fetchCartData();
-    }, [currentUser]);
+    }, [user.id]);
 
     const updateQuantity = async (cartId, newQuantity) => {
         if (newQuantity < 1 || isUpdating) return;
@@ -43,7 +44,7 @@ export default function BasketPage() {
                     ? {
                         ...item,
                         quantity: newQuantity,
-                        item_total: item.price_at_adding * newQuantity 
+                        item_total: item.price_at_adding * newQuantity
                     }
                     : item
             );
@@ -64,7 +65,7 @@ export default function BasketPage() {
                 cart_total: newCartTotal
             });
 
-            const response = await fetch('http://localhost:3009/api/cart/update', {
+            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/api/cart/update', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +76,7 @@ export default function BasketPage() {
                 })
             });
 
-            const responseData = await response.json(); 
+            const responseData = await response.json();
 
             if (!response.ok) {
                 throw new Error(responseData.error || responseData.details || 'Unknown error');
@@ -96,11 +97,9 @@ export default function BasketPage() {
         }
     };
 
-
-
     const removeItem = async (cartId) => {
         try {
-            await fetch(`http://localhost:3009/api/cart/remove/${cartId}`, {
+            await fetch(`http://rainbow-backend-a9w1.onrender.com/api/cart/remove/${cartId}`, {
                 method: 'DELETE'
             });
             await fetchCartCount();
@@ -110,6 +109,28 @@ export default function BasketPage() {
         }
     };
 
+
+    const handleAddToFavorites = async (item) => {
+        try {
+            const product = {
+                id: item.product_id,
+                name: item.product_name,
+                price: item.price_at_adding,
+                image: item.image_path
+            };
+
+            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/api/add-favorite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id, product })
+            });
+
+            const data = await response.json();
+            alert(data.message || 'Добавлено в избранное');
+        } catch (error) {
+            console.error('Ошибка при добавлении в избранное:', error);
+        }
+    };
     return (
         <section className="basketpage">
             <div className="container">
@@ -133,8 +154,9 @@ export default function BasketPage() {
 
                                         <div className='basketpage-product-subtitle'>
                                             <div className='basketpage-product-fav_tra'>
-                                                <img src={favorite} alt="В избранное" />
-                                                <button>В избранное</button>
+                                                <button onClick={() => handleAddToFavorites(item)}>
+                                                    <img src={favorite} alt="В избранное" /> В избранное
+                                                </button>
                                                 <img src={trash} alt="Удалить" />
                                                 <button onClick={() => removeItem(item.id)}>Удалить</button>
                                             </div>
@@ -163,7 +185,7 @@ export default function BasketPage() {
                                 <button>Введите промокод</button>
                                 <span>{totals.cart_total || 0} ₽</span>
                             </div>
-                            <Link to='#'>Оформить заказ</Link>
+                            <Link to='/paymentpage'>Оформить заказ</Link>
                         </div>
                     </div>
                 </div>

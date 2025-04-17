@@ -1,4 +1,4 @@
-import Loginregistration from "../../User/Loginregistration"
+import Loginregistration from "../../User/Login"
 
 
 

@@ -110,3 +110,60 @@
     font-size: 20px;
     font-family: "Rubik", sans-serif;
 }
+
+
+
+
+.admin-login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Rubik", sans-serif;
+}
+
+.admin-login-form {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    background-color: rgb(241 241 241);
+    width: 100%;
+    max-width: 400px;
+}
+
+.admin-login-title {
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.admin-input-group {
+    margin-bottom: 15px;
+}
+
+.admin-input-label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.admin-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.admin-login-button {
+    width: 100%;
+    padding: 12px;
+    background: #00C65E;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+}
+
+.admin-error-message {
+    color: red;
+    margin-bottom: 10px;
+    text-align: center;
+}

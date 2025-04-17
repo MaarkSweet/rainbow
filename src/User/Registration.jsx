@@ -1,236 +1,169 @@
 import '../main.css'
 import './Registration.css'
-import './Loginregistration.css'
+import './Login.css'
 import registrationstar from './img/registrationstar.svg'
 import showpassword from './img/showpassword.svg'
 import btnrating from './img/btnrating.svg'
 import React, { useState } from 'react';
-
-
+import { useNavigate, Link } from 'react-router-dom';
 
 export default function Registration() {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [show, setShow] = useState(false);
-    const [password, setPassword] = useState('');
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    });
+    const [showPassword, setShowPassword] = useState(false);
     const [isValid, setIsValid] = useState(true);
-    const [isRegistered, setIsRegistered] = useState(false); 
+    const navigate = useNavigate();
 
-    
-    const handleFirstNameChange = (e) => {
-        setFirstName(e.target.value);
-    };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
 
-    const handleLastNameChange = (e) => {
-        setLastName(e.target.value);
+        // Валидация пароля
+        if (name === 'password') {
+            const isValidPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value);
+            setIsValid(isValidPassword);
+        }
     };
 
     const toggleShowPassword = () => {
-        setShow(!show); 
+        setShowPassword(!showPassword);
     };
 
-    const handlePasswordChange = (e) => {
-        const value = e.target.value;
-        setPassword(value);
-
-        const isValidPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/.test(value);
-        setIsValid(isValidPassword);
-    };
-
-   
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-       
+        if (formData.password !== formData.confirmPassword) {
+            alert('Пароли не совпадают');
+            return;
+        }
+
         if (!isValid) {
             alert('Пароль не соответствует требованиям');
             return;
         }
 
-        
-        const userData = {
-            firstName,
-            lastName,
-            email: e.target.email.value,
-            password,
-        };
-
         try {
-         
-            const response = await fetch('http://localhost:3009/api/register', {
+            const response = await fetch('http://rainbow-backend-a9w1.onrender.com/api/register', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userData),
-            });
-
-           
-            if (response.ok) {
-                const data = await response.json();
-                alert('Регистрация прошла успешно!');
-                setIsRegistered(true); 
-                console.log('Данные пользователя:', data);
-            } else {
-                const errorData = await response.json();
-                alert(`Ошибка: ${errorData.error}`);
-            }
-        } catch (error) {
-            console.error('Ошибка:', error);
-            alert('Ошибка при отправке данных');
-        }
-    };
-
-  
-    const handleLogin = async (e) => {
-        e.preventDefault();
-
-        const loginData = {
-            email: e.target.email.value,
-            password: e.target.password.value,
-        };
-
-        try {
-            const response = await fetch('http://localhost:3009/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginData),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    password: formData.password
+                })
             });
 
             if (response.ok) {
-                window.location.href = '/';
+                alert('Регистрация успешна! Теперь войдите.');
+                navigate('/login');
             } else {
                 const errorData = await response.json();
-                alert(`Ошибка: ${errorData.error}`);
+                alert(errorData.error);
             }
         } catch (error) {
             console.error('Ошибка:', error);
-            alert('Ошибка при отправке данных');
+            alert('Ошибка при регистрации');
         }
     };
+
     return (
-        <>
-            <section className='loginregistration'>
-                <div className="loginregistration-inner">
+        <section className="loginregistration">
+            <div className="loginregistration-inner">
+                <div className="loginregistration-registration">
+                    <h3>Регистрация</h3>
 
-
-                    <div className="loginregistration-registration">
-                        <div className='loginregistration-registration-title'>
-                            <div className='first-last-name'>
-                                <span>{isRegistered ? '' : `${firstName.charAt(0)}${lastName.charAt(0)}`}</span>
-                            </div>
-                            <h3>{isRegistered ? 'Вход' : `${firstName} ${lastName}`}</h3>
+                    <form className='loginregistration-registration-form' onSubmit={handleSubmit}>
+                        <div className='loginregistration-registration-form-inner'>
+                            <label htmlFor="firstName">Ваше имя<img src={registrationstar} alt="" /></label>
+                            <input
+                                type="text"
+                                name="firstName"
+                                placeholder='Иван'
+                                value={formData.firstName}
+                                onChange={handleChange}
+                                required
+                            />
                         </div>
 
-                        {isRegistered ? (
-                            
-                            <form className='loginregistration-registration-form' onSubmit={handleLogin}>
-                                <div className='loginregistration-registration-form-inner'>
-                                    <label htmlFor="">E-mail<img src={registrationstar} alt="" /></label>
-                                    <input
-                                        type="email"
-                                        placeholder='name@inbox.ru'
-                                        name="email"
-                                        required
-                                    />
-                                </div>
+                        <div className='loginregistration-registration-form-inner'>
+                            <label htmlFor="lastName">Ваша фамилия<img src={registrationstar} alt="" /></label>
+                            <input
+                                type="text"
+                                name="lastName"
+                                placeholder='Петров'
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
 
-                                <div className='loginregistration-registration-form-inner'>
-                                    <label htmlFor="">Пароль<img src={registrationstar} alt="" /></label>
-                                    <input className='input-form-relative'
-                                        type={show ? "text" : "password"}
-                                        placeholder='********'
-                                        name="password"
-                                        required
-                                    />
-                                    <button  type="button" onClick={toggleShowPassword}>
-                                        <img className='showpassword' src={showpassword} alt="" />
-                                        <img className='btnrating' src={btnrating} alt="" />
-                                    </button>
-                                </div>
+                        <div className='loginregistration-registration-form-inner'>
+                            <label htmlFor="email">E-mail<img src={registrationstar} alt="" /></label>
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder='name@inbox.ru'
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
 
-                                <button type="submit" className='loginregistration-registration-login'>
-                                    Войти
-                                </button>
-                            </form>
-                        ) : (
-                            
-                            <form className='loginregistration-registration-form' onSubmit={handleSubmit}>
-                                <div className='loginregistration-registration-form-inner'>
-                                    <label htmlFor="">Ваше имя<img src={registrationstar} alt="" /></label>
-                                    <input
-                                        type="text"
-                                        placeholder='Иван'
-                                        value={firstName}
-                                        onChange={handleFirstNameChange}
-                                        required
-                                    />
+                        <div className='loginregistration-registration-form-inner'>
+                            <label htmlFor="password">Пароль<img src={registrationstar} alt="" /></label>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                placeholder='********'
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                            />
+                            <button type="button" onClick={toggleShowPassword}>
+                                <img className='showpassword' src={showpassword} alt="" />
+                                <img className='btnrating' src={btnrating} alt="" />
+                            </button>
+                            {!isValid && (
+                                <div className="registration-warning">
+                                    Пароль должен состоять из 8 цифр и латинских строчных и заглавных символов.
                                 </div>
+                            )}
+                        </div>
 
-                                <div className='loginregistration-registration-form-inner'>
-                                    <label htmlFor="">Ваша фамилия<img src={registrationstar} alt="" /></label>
-                                    <input
-                                        type="text"
-                                        placeholder='Петров'
-                                        value={lastName}
-                                        onChange={handleLastNameChange}
-                                        required
-                                    />
-                                </div>
+                        <div className='loginregistration-registration-form-inner showpassword-repeat'>
+                            <label htmlFor="confirmPassword">Повторите пароль<img src={registrationstar} alt="" /></label>
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="confirmPassword"
+                                placeholder='********'
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                required
+                            />
+                            <button type="button" onClick={toggleShowPassword}>
+                                <img className='showpassword' src={showpassword} alt="" />
+                            </button>
+                        </div>
 
-                                <div className='loginregistration-registration-form-inner'>
-                                    <label htmlFor="">E-mail<img src={registrationstar} alt="" /></label>
-                                    <input
-                                        type="email"
-                                        placeholder='name@inbox.ru'
-                                        name="email"
-                                        required
-                                    />
-                                </div>
+                        <button type="submit" className='loginregistration-registration-login'>
+                            Зарегистрироваться
+                        </button>
+                    </form>
 
-                                <div className='loginregistration-registration-form-inner'>
-                                    <label htmlFor="">Пароль<img src={registrationstar} alt="" /></label>
-                                    <input
-                                        type={show ? "text" : "password"}
-                                        placeholder='********'
-                                        value={password}
-                                        onChange={handlePasswordChange}
-                                        required
-                                    />
-                                    <button type="button" onClick={toggleShowPassword}>
-                                        <img className='showpassword' src={showpassword} alt="" />
-                                        <img className='btnrating' src={btnrating} alt="" />
-                                    </button>
-                                    {!isValid && (
-                                        <div className="registration-warning">
-                                            Пароль должен состоять из 8 цифр и латинских строчных и заглавных символов.
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className='loginregistration-registration-form-inner showpassword-repeat'>
-                                    <label htmlFor="">Повторите пароль<img src={registrationstar} alt="" /></label>
-                                    <input
-                                        type={show ? "text" : "password"}
-                                        placeholder='********'
-                                        required
-                                    />
-                                    <button type="button" onClick={toggleShowPassword}>
-                                        <img className='showpassword' src={showpassword} alt="" />
-                                    </button>
-                                </div>
-
-                                <button type="submit" className='loginregistration-registration-login'>
-                                    Зарегистрироваться
-                                </button>
-                            </form>
-                        )}
+                    <div className="loginregistration-form-register">
+                        <p>Уже есть аккаунт? <Link to="/login">Войти</Link></p>
                     </div>
-
                 </div>
-            </section>
-        </>
-    )
+            </div>
+        </section>
+    );
 }

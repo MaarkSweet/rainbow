@@ -29,7 +29,7 @@ export default function BasketPage() {
                 total: totals.cart_total
             };
     
-            const response = await fetch('http://https://rainbow-backend-a9w1.onrender.com//api/orders', {
+            const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/orders', {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ export default function BasketPage() {
             }
             
             await Promise.all(cartItems.map(item => 
-                fetch(`http://https://rainbow-backend-a9w1.onrender.com//api/cart/remove/${item.id}`, { 
+                fetch(`http://rainbow-backend-a9w1.onrender.com//api/cart/remove/${item.id}`, { 
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${user.token || ''}`
@@ -61,7 +61,7 @@ export default function BasketPage() {
 
     const fetchCartData = async () => {
         try {
-            const response = await fetch(`http://https://rainbow-backend-a9w1.onrender.com//api/cart/${user.id}`);
+            const response = await fetch(`http://rainbow-backend-a9w1.onrender.com//api/cart/${user.id}`);
             const data = await response.json();
             setCartItems(data.items);
             setTotals(data.totals);
@@ -108,7 +108,7 @@ export default function BasketPage() {
                 cart_total: newCartTotal
             });
 
-            const response = await fetch('http://https://rainbow-backend-a9w1.onrender.com//api/cart/update', {
+            const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/cart/update', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,7 +142,7 @@ export default function BasketPage() {
 
     const removeItem = async (cartId) => {
         try {
-            await fetch(`http://https://rainbow-backend-a9w1.onrender.com//api/cart/remove/${cartId}`, {
+            await fetch(`http://rainbow-backend-a9w1.onrender.com//api/cart/remove/${cartId}`, {
                 method: 'DELETE'
             });
             await fetchCartCount();
@@ -162,7 +162,7 @@ export default function BasketPage() {
                 image: item.image_path
             };
 
-            const response = await fetch('http://https://rainbow-backend-a9w1.onrender.com//api/add-favorite', {
+            const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/add-favorite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: user.id, product })

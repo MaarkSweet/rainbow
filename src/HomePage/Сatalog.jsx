@@ -24,7 +24,7 @@ export default function Catalog({ searchQuery = '', hideAddToCart = false, offer
             return;
         }
         try {
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/cart/add', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/cart/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export default function Catalog({ searchQuery = '', hideAddToCart = false, offer
             try {
                 let url;
                 if (offerType) {
-                    url = `http://rainbow-backend-a9w1.onrender.com//api/products/${offerType}`;
+                    url = `https://rainbow-backend-a9w1.onrender.com/api/products/${offerType}`;
                 } else {
                     const params = new URLSearchParams();
                     if (searchQuery) params.append('q', searchQuery);
@@ -64,7 +64,7 @@ export default function Catalog({ searchQuery = '', hideAddToCart = false, offer
                     if (searchParams.get('manufacturerSearch')) params.append('manufacturer', searchParams.get('manufacturerSearch'));
                     if (searchParams.get('inStock')) params.append('inStock', searchParams.get('inStock'));
 
-                    url = `http://rainbow-backend-a9w1.onrender.com//api/catalog?${params.toString()}`;
+                    url = `https://rainbow-backend-a9w1.onrender.com/api/catalog?${params.toString()}`;
                 }
 
                 const response = await fetch(url);
@@ -91,7 +91,7 @@ export default function Catalog({ searchQuery = '', hideAddToCart = false, offer
         }
 
         try {
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/add-favorite', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/add-favorite', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

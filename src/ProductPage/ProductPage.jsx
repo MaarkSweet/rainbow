@@ -36,7 +36,7 @@ export default function ProductPage() {
                 total: product.price * count
             };
 
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/orders', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export default function ProductPage() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://rainbow-backend-a9w1.onrender.com//api/catalog/${id}`);
+                const response = await fetch(`https://rainbow-backend-a9w1.onrender.com/api/catalog/${id}`);
                 if (!response.ok) throw new Error('Товар не найден');
                 const data = await response.json();
                 setProduct(data);
@@ -80,7 +80,7 @@ export default function ProductPage() {
         }
 
         try {
-            await fetch('http://rainbow-backend-a9w1.onrender.com//api/cart/add', {
+            await fetch('https://rainbow-backend-a9w1.onrender.com/api/cart/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ export default function ProductPage() {
         }
 
         try {
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/add-favorite', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/add-favorite', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -53,7 +53,7 @@ export default function Profile() {
     };
 
     const handleCheckOldPassword = async () => {
-        const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/change-password', {
+        const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/change-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: user.email, oldPassword, newPassword: oldPassword })
@@ -75,7 +75,7 @@ export default function Profile() {
             return;
         }
 
-        const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/change-password', {
+        const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/change-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: user.email, oldPassword, newPassword })
@@ -96,7 +96,7 @@ export default function Profile() {
 
     useEffect(() => {
         if (user?.id) {
-            fetch(`http://rainbow-backend-a9w1.onrender.com//api/favorites/${user.id}`)
+            fetch(`https://rainbow-backend-a9w1.onrender.com/api/favorites/${user.id}`)
                 .then(res => res.json())
                 .then(data => setFavorites(data))
                 .catch(err => console.error(err));
@@ -104,7 +104,7 @@ export default function Profile() {
     }, [user]);
 
     const handleUpdateAddress = async () => {
-        const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/update-address', {
+        const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/update-address', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: user.email, deliveryAddress })
@@ -121,7 +121,7 @@ export default function Profile() {
 
     const removeFromFavorites = async (productName) => {
         try {
-            const response = await fetch('http://rainbow-backend-a9w1.onrender.com//api/favorites/remove', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/favorites/remove', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

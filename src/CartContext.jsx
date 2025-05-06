@@ -9,7 +9,7 @@ export const CartProvider = ({ children }) => {
   const fetchCartCount = async () => {
     if (!user) return;
     try {
-      const response = await fetch(`http://rainbow-backend-a9w1.onrender.com//api/cart/${user.id}`);
+      const response = await fetch(`https://rainbow-backend-a9w1.onrender.com/api/cart/${user.id}`);
       const data = await response.json();
       setCartCount(data.totals?.total_items || 0);
     } catch (error) {

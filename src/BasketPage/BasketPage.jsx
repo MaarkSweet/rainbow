@@ -8,6 +8,7 @@ import Catalog from '../HomePage/Сatalog'
 import React, { useState, useEffect } from 'react'
 import { useCart } from '../CartContext'
 import { useAuth } from '../AuthContext'
+import { useNavigate } from 'react-router-dom';
 
 export default function BasketPage() {
     const [cartItems, setCartItems] = useState([]);
@@ -15,10 +16,52 @@ export default function BasketPage() {
     const { user } = useAuth();
     const [isUpdating, setIsUpdating] = useState(false);
     const { fetchCartCount } = useCart();
+    const navigate = useNavigate();
+
+    const handleCheckout = async () => {
+        try {
+            const orderData = {
+                user_id: user.id,
+                items: cartItems.map(item => ({
+                    product_id: item.product_id, 
+                    quantity: item.quantity
+                })),
+                total: totals.cart_total
+            };
+    
+            const response = await fetch('http://localhost:3009/api/orders', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token || ''}`
+                },
+                body: JSON.stringify(orderData)
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Ошибка оформления заказа');
+            }
+            
+            await Promise.all(cartItems.map(item => 
+                fetch(`http://localhost:3009/api/cart/remove/${item.id}`, { 
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${user.token || ''}`
+                    }
+                })
+            ));
+            
+            navigate('/paymentpage');
+        } catch (error) {
+            console.error('Ошибка оформления заказа:', error);
+            alert(error.message);
+        }
+    };
 
     const fetchCartData = async () => {
         try {
-            const response = await fetch(`https://rainbow-backend-a9w1.onrender.com/api/cart/${user.id}`);
+            const response = await fetch(`http://localhost:3009/api/cart/${user.id}`);
             const data = await response.json();
             setCartItems(data.items);
             setTotals(data.totals);
@@ -65,7 +108,7 @@ export default function BasketPage() {
                 cart_total: newCartTotal
             });
 
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/cart/update', {
+            const response = await fetch('http://localhost:3009/api/cart/update', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -99,7 +142,7 @@ export default function BasketPage() {
 
     const removeItem = async (cartId) => {
         try {
-            await fetch(`https://rainbow-backend-a9w1.onrender.com/api/cart/remove/${cartId}`, {
+            await fetch(`http://localhost:3009/api/cart/remove/${cartId}`, {
                 method: 'DELETE'
             });
             await fetchCartCount();
@@ -119,7 +162,7 @@ export default function BasketPage() {
                 image: item.image_path
             };
 
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/add-favorite', {
+            const response = await fetch('http://localhost:3009/api/add-favorite', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: user.id, product })
@@ -185,13 +228,12 @@ export default function BasketPage() {
                                 <button>Введите промокод</button>
                                 <span>{totals.cart_total || 0} ₽</span>
                             </div>
-                            <Link to='/paymentpage'>Оформить заказ</Link>
+                            <button className='Place-an-order' onClick={handleCheckout}>Оформить заказ</button>
                         </div>
                     </div>
                 </div>
             </div>
             <Catalog />
         </section>
-
     );
 }

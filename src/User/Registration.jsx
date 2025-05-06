@@ -51,7 +51,7 @@ export default function Registration() {
         }
 
         try {
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/register', {
+            const response = await fetch('http://localhost:3009/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -84,6 +84,7 @@ export default function Header({ onSearch }) {
                                                     <li><Link to="/О нас">О нас</Link></li>
                                                     <li><Link to="/Об оплате">Об оплате</Link></li>
                                                     <li><Link to='/Каталог'>Каталог</Link></li>
+                                                    <li><Link to="/special-offers">Спецпредложения</Link></li>
                                                 </ul>
                                             </nav>
 
@@ -123,6 +124,7 @@ export default function Header({ onSearch }) {
                                         </div>
                                     )}
                                 </li>
+
                                 <li className='nav-right-content'>
                                     {isSearchActive ? null : (
                                         <img
@@ -132,14 +134,24 @@ export default function Header({ onSearch }) {
                                             className="search-icon"
                                         />
                                     )}
-                                    <Link className='header-basket' to='/basket'>
+                                    <button
+                                        className='header-basket'
+                                        onClick={() => {
+                                            if (!user) {
+                                                alert('Пожалуйста, войдите в аккаунт');
+                                            } else {
+                                                navigate('/basket');
+                                            }
+                                        }}
+                                    >
                                         <img src={shopping} alt="Корзина" />
                                         {cartCount > 0 && (
                                             <span className="cart-count-badge">
                                                 {cartCount > 9 ? '9+' : cartCount}
                                             </span>
                                         )}
-                                    </Link>
+                                    </button>
+
                                     {user ? (
                                         <div className="user-profile">
                                             <Link className='user-profile-link' to='/profile'>

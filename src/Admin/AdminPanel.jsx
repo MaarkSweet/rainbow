@@ -25,7 +25,7 @@ const AdminPanel = () => {
     const fetchOrders = async () => {
         try {
             const credentials = btoa('admin:admin');
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/orders', {
+            const response = await fetch('http://localhost:3009/admin/orders', {
                 headers: {
                     'Authorization': `Basic ${credentials}`,
                     'Content-Type': 'application/json'
@@ -44,10 +44,52 @@ const AdminPanel = () => {
         }
     };
 
+    const handleAcceptOrder = async (orderId) => {
+        try {
+            const credentials = btoa('admin:admin');
+            const response = await fetch(`http://localhost:3009/admin/orders/${orderId}/accept`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Basic ${credentials}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Ошибка принятия заказа');
+
+            await fetchOrders();
+            alert('Заказ успешно принят!');
+        } catch (error) {
+            console.error('Error:', error);
+            alert(error.message);
+        }
+    };
+
+    const handleRejectOrder = async (orderId) => {
+        try {
+            const credentials = btoa('admin:admin');
+            const response = await fetch(`http://localhost:3009/admin/orders/${orderId}/reject`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Basic ${credentials}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) throw new Error('Ошибка отклонения заказа');
+
+            await fetchOrders();
+            alert('Заказ успешно отклонен!');
+        } catch (error) {
+            console.error('Error:', error);
+            alert(error.message);
+        }
+    };
+
     const fetchUsers = async () => {
         try {
             const credentials = btoa('admin:admin');
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/users', {
+            const response = await fetch('http://localhost:3009/admin/users', {
                 headers: {
                     'Authorization': `Basic ${credentials}`
                 }
@@ -76,7 +118,7 @@ const AdminPanel = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/catalog');
+            const response = await fetch('http://localhost:3009/api/catalog');
             if (!response.ok) throw new Error('Ошибка загрузки');
             const data = await response.json();
             setProducts(data);
@@ -88,7 +130,7 @@ const AdminPanel = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/categories');
+            const response = await fetch('http://localhost:3009/api/categories');
             const data = await response.json();
             setCategories(data);
         } catch (error) {
@@ -98,7 +140,7 @@ const AdminPanel = () => {
 
     const fetchManufacturers = async () => {
         try {
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/manufacturers');
+            const response = await fetch('http://localhost:3009/api/manufacturers');
             const data = await response.json();
             setManufacturers(data);
         } catch (error) {
@@ -117,7 +159,7 @@ const AdminPanel = () => {
 
             const credentials = btoa('admin:admin');
 
-            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/products', {
+            const response = await fetch('http://localhost:3009/admin/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -154,7 +196,7 @@ const AdminPanel = () => {
             if (!window.confirm('Вы точно хотите удалить этот товар?')) return;
 
             const credentials = btoa('admin:admin');
-            const response = await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/products/${id}`, {
+            const response = await fetch(`http://localhost:3009/admin/products/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Basic ${credentials}`
@@ -240,24 +282,87 @@ const AdminPanel = () => {
                             orders.map(order => (
                                 <div key={order.id} className="order-item">
                                     <div className="order-header">
-                                        <span>Заказ #{order.id}</span>
-                                        <span>Статус: {order.status || 'в обработке'}</span>
-                                        <span>Дата: {new Date(order.created_at).toLocaleDateString()}</span>
+                                        <div className="order-meta">
+                                            <span className="order-number">Заказ #{order.id}</span>
+                                            <span className={`order-status status-${order.status}`}>
+                                                {order.status === 'pending' && 'Ожидает решения'}
+                                                {order.status === 'accepted' && 'Принят'}
+                                                {order.status === 'rejected' && 'Отклонен'}
+                                            </span>
+                                        </div>
+                                        <span className="order-date">
+                                            {new Date(order.created_at).toLocaleDateString('ru-RU', {
+                                                day: 'numeric',
+                                                month: 'long',
+                                                year: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </span>
                                     </div>
-                                    <div className="order-user">
-                                        Пользователь: {order.first_name} {order.last_name} ({order.email})
+
+                                    <div className="order-user-info">
+                                        <h4>Информация о клиенте:</h4>
+                                        <div className="user-details">
+                                            <p>
+                                                <span className="detail-label">Имя:</span>
+                                                {order.first_name} {order.last_name}
+                                            </p>
+                                            <p>
+                                                <span className="detail-label">Email:</span>
+                                                {order.email}
+                                            </p>
+                                            {order.delivery_address && (
+                                                <p>
+                                                    <span className="detail-label">Адрес доставки:</span>
+                                                    {order.delivery_address}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div className="order-details">
-                                        <div className="order-products-header">Товары:</div>
-                                        {order.items.map((item, index) => (
-                                            <div key={index} className="order-product-item">
-                                                <span>{item.product_name}</span>
-                                                <span>{item.quantity} × {item.price}₽</span>
-                                            </div>
-                                        ))}
+
+                                    <div className="order-products">
+                                        <h4>Состав заказа:</h4>
+                                        <div className="products-list">
+                                            {order.items.map((item, index) => (
+                                                <div key={index} className="product-item">
+                                                    <span className="product-name">{item.product_name}</span>
+                                                    <div className="product-meta">
+                                                        <span className="product-quantity">
+                                                            {item.quantity} шт.
+                                                        </span>
+                                                        <span className="product-price">
+                                                            {item.price}₽/шт.
+                                                        </span>
+                                                        <span className="product-total">
+                                                            {item.quantity * item.price}₽
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
+
                                     <div className="order-footer">
-                                        <span>Итого: {order.total}₽</span>
+                                        <div className="total-sum">
+                                            Итого: <span>{order.total}₽</span>
+                                        </div>
+                                        {order.status === 'pending' && (
+                                            <div className="order-actions">
+                                                <button
+                                                    className="accept-button"
+                                                    onClick={() => handleAcceptOrder(order.id)}
+                                                >
+                                                    ✓ Принять заказ
+                                                </button>
+                                                <button
+                                                    className="reject-button"
+                                                    onClick={() => handleRejectOrder(order.id)}
+                                                >
+                                                    ✕ Отклонить заказ
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))
@@ -277,7 +382,7 @@ const AdminPanel = () => {
                             onChange={(e) => setNewCategory(e.target.value)}
                         />
                         <button onClick={async () => {
-                            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/categories', {
+                            const response = await fetch('http://localhost:3009/admin/categories', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ name: newCategory })
@@ -298,7 +403,7 @@ const AdminPanel = () => {
                                 <span>{cat}</span>
                                 <button className="delete-btn" onClick={async () => {
                                     if (window.confirm(`Удалить категорию "${cat}"?`)) {
-                                        await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/categories/${cat}`, { method: 'DELETE' });
+                                        await fetch(`http://localhost:3009/admin/categories/${cat}`, { method: 'DELETE' });
                                         fetchCategories();
                                     }
                                 }}>Удалить</button>
@@ -315,7 +420,7 @@ const AdminPanel = () => {
                             onChange={(e) => setNewManufacturer(e.target.value)}
                         />
                         <button onClick={async () => {
-                            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/manufacturers', {
+                            const response = await fetch('http://localhost:3009/admin/manufacturers', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ name: newManufacturer })
@@ -336,7 +441,7 @@ const AdminPanel = () => {
                                 <span>{man}</span>
                                 <button className="delete-btn" onClick={async () => {
                                     if (window.confirm(`Удалить производителя "${man}"?`)) {
-                                        await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/manufacturers/${man}`, { method: 'DELETE' });
+                                        await fetch(`http://localhost:3009/admin/manufacturers/${man}`, { method: 'DELETE' });
                                         fetchManufacturers();
                                     }
                                 }}>Удалить</button>

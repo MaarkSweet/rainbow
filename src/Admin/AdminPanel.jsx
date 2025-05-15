@@ -25,7 +25,7 @@ const AdminPanel = () => {
     const fetchOrders = async () => {
         try {
             const credentials = btoa('admin:admin');
-            const response = await fetch('http://localhost:3009/admin/orders', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/orders', {
                 headers: {
                     'Authorization': `Basic ${credentials}`,
                     'Content-Type': 'application/json'
@@ -47,7 +47,7 @@ const AdminPanel = () => {
     const handleAcceptOrder = async (orderId) => {
         try {
             const credentials = btoa('admin:admin');
-            const response = await fetch(`http://localhost:3009/admin/orders/${orderId}/accept`, {
+            const response = await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/orders/${orderId}/accept`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Basic ${credentials}`,
@@ -68,7 +68,7 @@ const AdminPanel = () => {
     const handleRejectOrder = async (orderId) => {
         try {
             const credentials = btoa('admin:admin');
-            const response = await fetch(`http://localhost:3009/admin/orders/${orderId}/reject`, {
+            const response = await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/orders/${orderId}/reject`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Basic ${credentials}`,
@@ -89,7 +89,7 @@ const AdminPanel = () => {
     const fetchUsers = async () => {
         try {
             const credentials = btoa('admin:admin');
-            const response = await fetch('http://localhost:3009/admin/users', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/users', {
                 headers: {
                     'Authorization': `Basic ${credentials}`
                 }
@@ -118,7 +118,7 @@ const AdminPanel = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('http://localhost:3009/api/catalog');
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/catalog');
             if (!response.ok) throw new Error('Ошибка загрузки');
             const data = await response.json();
             setProducts(data);
@@ -130,7 +130,7 @@ const AdminPanel = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('http://localhost:3009/api/categories');
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/categories');
             const data = await response.json();
             setCategories(data);
         } catch (error) {
@@ -140,7 +140,7 @@ const AdminPanel = () => {
 
     const fetchManufacturers = async () => {
         try {
-            const response = await fetch('http://localhost:3009/api/manufacturers');
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/api/manufacturers');
             const data = await response.json();
             setManufacturers(data);
         } catch (error) {
@@ -159,7 +159,7 @@ const AdminPanel = () => {
 
             const credentials = btoa('admin:admin');
 
-            const response = await fetch('http://localhost:3009/admin/products', {
+            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -196,7 +196,7 @@ const AdminPanel = () => {
             if (!window.confirm('Вы точно хотите удалить этот товар?')) return;
 
             const credentials = btoa('admin:admin');
-            const response = await fetch(`http://localhost:3009/admin/products/${id}`, {
+            const response = await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/products/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Basic ${credentials}`
@@ -382,7 +382,7 @@ const AdminPanel = () => {
                             onChange={(e) => setNewCategory(e.target.value)}
                         />
                         <button onClick={async () => {
-                            const response = await fetch('http://localhost:3009/admin/categories', {
+                            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/categories', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ name: newCategory })
@@ -403,7 +403,7 @@ const AdminPanel = () => {
                                 <span>{cat}</span>
                                 <button className="delete-btn" onClick={async () => {
                                     if (window.confirm(`Удалить категорию "${cat}"?`)) {
-                                        await fetch(`http://localhost:3009/admin/categories/${cat}`, { method: 'DELETE' });
+                                        await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/categories/${cat}`, { method: 'DELETE' });
                                         fetchCategories();
                                     }
                                 }}>Удалить</button>
@@ -420,7 +420,7 @@ const AdminPanel = () => {
                             onChange={(e) => setNewManufacturer(e.target.value)}
                         />
                         <button onClick={async () => {
-                            const response = await fetch('http://localhost:3009/admin/manufacturers', {
+                            const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/manufacturers', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ name: newManufacturer })
@@ -441,7 +441,7 @@ const AdminPanel = () => {
                                 <span>{man}</span>
                                 <button className="delete-btn" onClick={async () => {
                                     if (window.confirm(`Удалить производителя "${man}"?`)) {
-                                        await fetch(`http://localhost:3009/admin/manufacturers/${man}`, { method: 'DELETE' });
+                                        await fetch(`https://rainbow-backend-a9w1.onrender.com/admin/manufacturers/${man}`, { method: 'DELETE' });
                                         fetchManufacturers();
                                     }
                                 }}>Удалить</button>

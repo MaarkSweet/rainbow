@@ -14,7 +14,7 @@ const AdminLogin = () => {
     const encodedCredentials = btoa(`${login}:${password}`);
 
     try {
-      const response = await fetch('http://localhost:3009/admin/products', {
+      const response = await fetch('https://rainbow-backend-a9w1.onrender.com/admin/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

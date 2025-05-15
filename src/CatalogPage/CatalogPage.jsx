@@ -31,11 +31,11 @@ export default function CatalogPage() {
             try {
                 setLoading(prev => ({ ...prev, categories: true, manufacturers: true }));
 
-                const categoriesResponse = await fetch('http://localhost:3009/api/categories');
+                const categoriesResponse = await fetch('https://rainbow-backend-a9w1.onrender.com/api/categories');
                 const categoriesData = await categoriesResponse.json();
                 setCategories(categoriesData);
 
-                const manufacturersResponse = await fetch('http://localhost:3009/api/manufacturers');
+                const manufacturersResponse = await fetch('https://rainbow-backend-a9w1.onrender.com/api/manufacturers');
                 const manufacturersData = await manufacturersResponse.json();
                 setManufacturers(manufacturersData);
                 setFilteredManufacturers(['Все производители', ...manufacturersData.slice(0, 2)]);
